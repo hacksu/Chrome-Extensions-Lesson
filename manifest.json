@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Hello World",
+  "version": "1.0",
+  "description": "HacKSU extension lesson",
+  "icons": {
+    "128": "images/icon48.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.example.com/"
+      ],
+      "js": [
+        "script.js"
+      ]
+    }
+  ],
+  "host_permissions": [
+    "tabs"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "images/Untitled.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}
