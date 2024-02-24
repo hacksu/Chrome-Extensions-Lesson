@@ -15,4 +15,8 @@ setInterval(function () {
 }, 1000);
 */
 
-
+// insert an element
+let img = document.createElement('img');
+img.src = `chrome-extension://${chrome.runtime.id}/images/icon128.png`;
+img.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999;';
+document.body.appendChild(img);

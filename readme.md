@@ -23,7 +23,7 @@ You may have heard about the anti-adblock changes coming to Chrome later this ye
 
 For our purposes, Manifest version 3 signifies that our web extension is up to date with the latest features and web standards, but this is not necessary to develop an extension locally.
 
-As an optional step, we can add an icon to our extension. Add an icon image file to your project, and add the following to the ```manifest.json``` file.
+As an optional step, we can add an icon to our extension. Add an icon image file to your project, and add the following to the manifest.json file.
 
 ```json
 "icons": {
@@ -32,8 +32,6 @@ As an optional step, we can add an icon to our extension. Add an icon image file
 ```
 
 You can specify multiple icon sizes if you wish (128, 48, 32, 16).
-
-The other key-value pairs will become evident after the next few steps.
 
 4. Save the file.
 5. Paste ```chrome://extensions``` in your address bar and enter. This is the main page we will be visiting to manage our extensions. 
@@ -72,7 +70,7 @@ Let's create a script that runs on a webpage. We will first need to make some mo
 
 With these key-value pairs, we are telling Chrome that we want to run all JavaScript files in the list within the key "js", on all websites listed within the "matches" key.
 
-##### Note: Despite having one value per key, these brackets are __NOT__ optional. JSON syntax does not support type coersion between one-element lists and strings.
+##### Note: Despite these keys having one value each, these square brackets are __NOT__ optional. JSON syntax does not support type coersion between one-element lists and strings.
 
 Now, it is time to create our script.
 
@@ -116,7 +114,43 @@ setInterval(function () {
 }, 1000);
 ```
 
-After saving our extension, the appearance of the page changes dramatically, with a random hue and blur effect applied each second.
+After saving our extension, the appearance of the page changes dramatically, with a random hue and blur effect applied each second. Let's inject an image into the page.
+
+6. Add the following to manifest.json, and be sure to replace ```[image-path-here]``` with whatever path your image uses.
+
+```json
+"web_accessible_resources": [
+    {
+      "resources": [
+        "images/[image-path-here]"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+```
+
+7. Add the following to ```script.js```, again, replace ```[image-path-here]```.
+
+```js
+// overlay an image on the center of the page
+let img = document.createElement('img');
+img.src = `chrome-extension://${chrome.runtime.id}/images/[image-path-here]`;
+img.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+`;
+document.body.appendChild(img);
+```
+
+Save and reload the extension. 
+
+[<img src="functionality2.png" width="500"/>](functionality2.png)
+
 
 ### Creating a popup
 
@@ -143,7 +177,7 @@ When reloading our extension and clicking on the icon (you may need to find your
 
 [<img src="popup1.png" width="500"/>](popup1.png)
 
-Yay! It may seem like you can just use normal HTML. However, certain behaviors, such as inserting a hyperlink is more complicated, and which will tie us into into Chrome extension APIs. 
+It may seem like you can just use normal HTML. However, certain behaviors, such as inserting a link is more complicated, and which will tie us into into Chrome extension APIs. 
 
 3. Let's try adding the following link (it will not work just yet)
 
@@ -151,7 +185,7 @@ Yay! It may seem like you can just use normal HTML. However, certain behaviors, 
 <a href="https://hacksu.com/cute_puppy.jpg">Feel better!</a>
 ```
 
-To add a link, we need access the [tabs Chrome extension API](https://developer.chrome.com/docs/extensions/reference/api/tabs).
+Normally, we can open a link in a new tab using ```target="_blank"```, however, this is does not work for our popup window. To add a link, we need access the [tabs Chrome extension API](https://developer.chrome.com/docs/extensions/reference/api/tabs).
 
 4. Add the following to the ```manifest.json``` file
 
@@ -199,5 +233,3 @@ and our HTML element:
 ```html
 <a href="https://hacksu.com/cute_puppy.jpg" class="new-tab">Feel better!</a>
 ```
-
-7. continued... likely will end with inserting an image onto the document via a button on the popup page
