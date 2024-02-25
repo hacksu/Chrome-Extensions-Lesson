@@ -12,7 +12,8 @@
         "<all_urls>"
       ],
       "js": [
-        "script.js"
+        "script.js",
+        "popup.js"
       ]
     }
   ],

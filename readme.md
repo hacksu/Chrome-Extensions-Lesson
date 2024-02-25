@@ -1,6 +1,6 @@
 # Chrome Extensions
 
-In this lesson, you will get an introduction to creating a Chrome extension. Extensions are fairly compatible across other browsers with minor tweaking to the main manifest.json file. For this lesson, we will be using Google Chrome as it provides a quick workflow to loading changes to an extension file. 
+In this lesson, you will get an introduction to creating a Chrome extension. Extensions are fairly compatible across other browsers with minor tweaking to the main manifest.json file, but adjustments may be necessary for browser API calls, which we will get to later. For this lesson, we will be using Google Chrome as it provides a quick workflow to loading changes to an extension file. 
 
 ## Setup
 
@@ -17,13 +17,13 @@ In this lesson, you will get an introduction to creating a Chrome extension. Ext
 }
 ```
 
-The shell of our extension is complete. So, first thing to note here. Web browsers are a constantly evolving software, and behaviors that used to behave a certain way will eventually become deprecated. Manifest version 2 is scheduled to be deprecated in June of 2024. 
+At this point, we have a functional extension. The manifest.json file is the heart of your Chrome extension, essentially a config file. Web browsers are a constantly evolving software, and behaviors that used to behave a certain way will eventually become deprecated. Manifest version 2 is scheduled to be deprecated in June of 2024. 
 
 You may have heard about the anti-adblock changes coming to Chrome later this year (2024). As of now, Adblockers currently run on manifest version 2, and currently rely on large sets of rules (upwards of 300k) which determine whether content on a page is an ad. You can view some example rule lists [here.](https://easylist.to/) The forced upgrade to ```"manifest_version": 3``` significantly limits the number of rules that an extension can run (up to 30k), which greatly limits the effectiveness of adblockers.
 
 For our purposes, Manifest version 3 signifies that our web extension is up to date with the latest features and web standards, but this is not necessary to develop an extension locally.
 
-As an optional step, we can add an icon to our extension. Add an icon image file to your project, and add the following to the manifest.json file.
+As an optional step, we can add an icon to our extension. Add an icon image file to your project somewhere within your folder (commonly within a subfolder, ```/images/```), and add the following to the manifest.json file.
 
 ```json
 "icons": {
@@ -31,21 +31,22 @@ As an optional step, we can add an icon to our extension. Add an icon image file
   },
 ```
 
+In my case, I use ```"128": "images/icon128.png"```
 You can specify multiple icon sizes if you wish (128, 48, 32, 16).
 
-4. Save the file.
+4. Save the manifest.json file.
 5. Paste ```chrome://extensions``` in your address bar and enter. This is the main page we will be visiting to manage our extensions. 
 
 [<img src="setup1.png" width="500"/>](setup1.png)
 
-6. Enable the "Developer mode" toggle on the top right. If this is not enabled, you cannot load your own extensions.
+6. Enable the "Developer mode" toggle on the top right. If this is not enabled, you cannot load custom extensions.
 7. Click the now visibile "Load unpacked" button on the top left. In the file explorer, locate the folder that you created in step 1.
 
 [<img src="setup2.png" width="500"/>](setup2.png)
 
 We have now enabled our extension. Currently, this extension is doing nothing. But we'll add some functionality soon. 
 
-You can disable this extension at any time by clicking the toggle at the bottom right of our extension item.
+##### You can disable this extension at any time by clicking the toggle at the bottom right of our extension item.
 
 ## Adding functionality
 
@@ -68,6 +69,7 @@ Let's create a script that runs on a webpage. We will first need to make some mo
   ]
 ```
 
+"content_scripts" allows your extension to inject scripts into existing web pages. You specify what script file you will use within "js", and all pages that this script should modify within "matches."
 With these key-value pairs, we are telling Chrome that we want to run all JavaScript files in the list within the key "js", on all websites listed within the "matches" key.
 
 ##### Note: Despite these keys having one value each, these square brackets are __NOT__ optional. JSON syntax does not support type coersion between one-element lists and strings.
@@ -84,7 +86,9 @@ alert("buzz buzz");
 
 Our extension is ready for testing.
 
-4. Navigate to the [extensions page](chrome://extensions) and hit the refresh button on our extension.
+4. Navigate to the [extensions page](chrome://extensions) and refresh the extension (Bottom right of the extension, next to the toggle).
+
+[<img src="functionality0.png" width="500"/>](functionality0.png)
 
 For now, we've only configured our extension to run on https://www.example.com. In the future, if you wish to run a script on all websites, you can replace the URL with the token ```"<all urls>"```
 
@@ -114,7 +118,8 @@ setInterval(function () {
 }, 1000);
 ```
 
-After saving our extension, the appearance of the page changes dramatically, with a random hue and blur effect applied each second. Let's inject an image into the page.
+After saving our extension, the appearance of the page changes dramatically, with a random hue and blur effect applied each second. 
+Let's inject an image into the page.
 
 6. Add the following to manifest.json, and be sure to replace ```[image-path-here]``` with whatever path your image uses.
 
@@ -122,7 +127,7 @@ After saving our extension, the appearance of the page changes dramatically, wit
 "web_accessible_resources": [
     {
       "resources": [
-        "images/[image-path-here]"
+        "[image-path-here]"
       ],
       "matches": [
         "<all_urls>"
@@ -131,12 +136,14 @@ After saving our extension, the appearance of the page changes dramatically, wit
   ]
 ```
 
-7. Add the following to ```script.js```, again, replace ```[image-path-here]```.
+In this example, we are using the ```<all_urls>``` keyword to modify the appearance of all pages. If you do not wish to do this, you can replace this with a specific URL as done earlier in the lesson.
+
+7. Add the following to ```script.js```, again, replace ```[image-path-here]``` with the path to your image. ```${chrome.runtime.id}``` brings you to the base folder of your extension.
 
 ```js
 // overlay an image on the center of the page
 let img = document.createElement('img');
-img.src = `chrome-extension://${chrome.runtime.id}/images/[image-path-here]`;
+img.src = `chrome-extension://${chrome.runtime.id}/[image-path-here]`;
 img.style.cssText = `
     position: fixed;
     top: 50%;
@@ -156,7 +163,7 @@ Save and reload the extension.
 
 Many extensions have a dialog that appears when an extension's icon is clicked.
 
-1. We first need to add a new value in our ```manifest.json``` file.
+1. We first need to add a new key-value pair in our ```manifest.json``` file.
 
 ```json
 "action": {
@@ -164,6 +171,7 @@ Many extensions have a dialog that appears when an extension's icon is clicked.
   }
 ```
 
+This specifies the page that opens when the extension icon is clicked in the browser toolbar.
 Now, we need to create the popup page. 
 
 2. Create a new file (within the folder created at the beginning) and name it ```popup.html```. Open the file with any text editor, and add the following HTML:
@@ -187,7 +195,7 @@ It may seem like you can just use normal HTML. However, certain behaviors, such 
 
 Normally, we can open a link in a new tab using ```target="_blank"```, however, this is does not work for our popup window. To add a link, we need access the [tabs Chrome extension API](https://developer.chrome.com/docs/extensions/reference/api/tabs).
 
-4. Add the following to the ```manifest.json``` file
+4. Add the following to the ```manifest.json``` file to grant permission to use the "tabs" API.
 
 ```json
 "host_permissions": [
@@ -195,7 +203,7 @@ Normally, we can open a link in a new tab using ```target="_blank"```, however, 
   ],
 ```
 
-This allows us to use methods such as ```chrome.tabs.create()```, which requires JavaScript to execute.
+This allows us to use methos such as ```chrome.tabs.create()```, which requires JavaScript to execute.
 
 5. Create a new file, ```popup.js```, and reference this new file at the bottom of popup.html.
 
@@ -209,6 +217,7 @@ This allows us to use methods such as ```chrome.tabs.create()```, which requires
 6. Within popup.js, add the following code:
 
 ```js
+// bind the link element to Chrome new tab event
 window.addEventListener('click', (e) => {
     if (e.target.href !== undefined) {
         chrome.tabs.create({ url: e.target.href })
@@ -216,11 +225,14 @@ window.addEventListener('click', (e) => {
 })
 ```
 
-You don't need to understand all of this code. In a nutshell, this code is checking if a clicked element has an href attribute, and if so, is passing that value to the new chrome tab. Now that we have set this up once, we can declare multiple ```<a>``` elements on the page and each will deliver to the corresponding destination.
+You don't need to understand all of this code. In a nutshell, this code is checking if a clicked element has an href attribute, and if so, passes that value to the new Chrome tab. Now that we have set this up once, we can declare multiple ```<a>``` elements on the page and each will deliver to the corresponding destination.
 
-However, if we wish for some links to pass the user to another page in our web extensions folder, this code is not sufficient. One way to differentiate this behavior is by qualifying classes to your elements, and checking for the existence of this qualifier.
+However, if we wish for some of our links to pass the user to another page in our web extensions folder, this code is not sufficient. One way to differentiate this behavior is by qualifying classes to your elements, and checking for the existence of this qualifier.
+
+7. Update the JavaScript code in ```popup.js``` as follows:
 
 ```js
+// bind the link element to Chrome new tab event
 window.addEventListener('click', (e) => {
     if (e.target.href !== undefined && e.target.classList.contains("new-tab")) {
         chrome.tabs.create({ url: e.target.href })
@@ -233,3 +245,5 @@ and our HTML element:
 ```html
 <a href="https://hacksu.com/cute_puppy.jpg" class="new-tab">Feel better!</a>
 ```
+
+Now, we are able to differentiate our links depending on behavior needed.
