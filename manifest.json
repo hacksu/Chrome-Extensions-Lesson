@@ -12,12 +12,11 @@
         "<all_urls>"
       ],
       "js": [
-        "script.js",
-        "popup.js"
+        "script.js"
       ]
     }
   ],
-  "host_permissions": [
+  "permissions": [
     "tabs"
   ],
   "action": {

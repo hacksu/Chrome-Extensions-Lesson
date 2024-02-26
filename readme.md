@@ -185,30 +185,48 @@ When reloading our extension and clicking on the icon (you may need to find your
 
 [<img src="popup1.png" width="500"/>](popup1.png)
 
-It may seem like you can just use normal HTML. However, certain behaviors, such as inserting a link is more complicated, and which will tie us into into Chrome extension APIs. 
+Let's add a second page to navigate to within our popup.
 
-3. Let's try adding the following link (it will not work just yet)
+3. Append ```popup.html``` with the following:
+
+```html
+<a href="popup2.html">Go to a new page</a>
+```
+
+4. Create new file, and name it ```popup2.html```. Open the file and add the following HTML:
+
+```html
+<p>You found me!</p>
+<a href="popup.html">Go back</a>
+```
+
+We now are able to switch between two pages of our extension.
+
+5. Let's try adding the following link (it will not work just yet)
 
 ```html
 <a href="https://hacksu.com/cute_puppy.jpg">Feel better!</a>
 ```
 
-Normally, we can open a link in a new tab using ```target="_blank"```, however, this is does not work for our popup window. To add a link, we need access the [tabs Chrome extension API](https://developer.chrome.com/docs/extensions/reference/api/tabs).
+We can open a link in a new tab using ```target="_blank"```, however, maybe we want to open a link in the current browser tab?
+
+To do this, we need access the [tabs Chrome extension API](https://developer.chrome.com/docs/extensions/reference/api/tabs).
 
 4. Add the following to the ```manifest.json``` file to grant permission to use the "tabs" API.
 
 ```json
-"host_permissions": [
+"permissions": [
     "tabs"
   ],
 ```
 
-This allows us to use methos such as ```chrome.tabs.create()```, which requires JavaScript to execute.
+This allows us to use methods such as ```chrome.tabs.create()```, which requires JavaScript to execute.
 
 5. Create a new file, ```popup.js```, and reference this new file at the bottom of popup.html.
 
 ```html
 <h1>:)</h1>
+<a href="popup2.html">Go to a new page</a>
 <a href="https://hacksu.com/cute_puppy.jpg">Feel better!</a>
 
 <script src=popup.js></script>
@@ -220,22 +238,22 @@ This allows us to use methos such as ```chrome.tabs.create()```, which requires 
 // bind the link element to Chrome new tab event
 window.addEventListener('click', (e) => {
     if (e.target.href !== undefined) {
-        chrome.tabs.create({ url: e.target.href })
+        chrome.tabs.update({ url: e.target.href })
     }
 })
 ```
 
-You don't need to understand all of this code. In a nutshell, this code is checking if a clicked element has an href attribute, and if so, passes that value to the new Chrome tab. Now that we have set this up once, we can declare multiple ```<a>``` elements on the page and each will deliver to the corresponding destination.
+You don't need to understand all of this code. In a nutshell, this code is checking if a clicked element has an href attribute, and if so, passes that value to the current active Chrome tab. 
 
-However, if we wish for some of our links to pass the user to another page in our web extensions folder, this code is not sufficient. One way to differentiate this behavior is by qualifying classes to your elements, and checking for the existence of this qualifier.
+However, a side effect of this code is that it causes unwanted side effects to the functionality of our previous link. One way to differentiate this behavior is by qualifying classes to your elements, and checking for the existence of this qualifier.
 
 7. Update the JavaScript code in ```popup.js``` as follows:
 
 ```js
 // bind the link element to Chrome new tab event
 window.addEventListener('click', (e) => {
-    if (e.target.href !== undefined && e.target.classList.contains("new-tab")) {
-        chrome.tabs.create({ url: e.target.href })
+    if (e.target.href !== undefined && e.target.classList.contains("current-tab")) {
+        chrome.tabs.update({ url: e.target.href })
     }
 })
 ```
@@ -243,7 +261,25 @@ window.addEventListener('click', (e) => {
 and our HTML element:
 
 ```html
-<a href="https://hacksu.com/cute_puppy.jpg" class="new-tab">Feel better!</a>
+<a href="https://hacksu.com/cute_puppy.jpg" class="current-tab">Feel better!</a>
 ```
 
 Now, we are able to differentiate our links depending on behavior needed.
+
+
+## Let's put some things together
+
+Let's create a button on our popup page that alters the appearance of the current tab.
+
+
+## Explore the great beyond!
+
+If you wish to explore extension development further, one of the easiest ways to do so is to mess with existing extensions. You can find some example extensions on the [Chrome Extensions documentation page](https://developer.chrome.com/docs/extensions/samples). 
+
+1. Find a project that seems interesting to you. 
+
+2. Clone the repo here: https://github.com/GoogleChrome/chrome-extensions-samples.git
+
+3. Load the unpacked extension in your browser, look at the code behind it, see if you can follow along with what makes it work, and experiment with modifications to change its functionality.
+
+Happy hacking!
