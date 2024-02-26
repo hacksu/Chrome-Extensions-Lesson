@@ -208,7 +208,7 @@ We now are able to switch between two pages of our extension.
 <a href="https://hacksu.com/cute_puppy.jpg">Feel better!</a>
 ```
 
-We can open a link in a new tab using ```target="_blank"```, however, maybe we want to open a link in the current browser tab?
+We can open a link in a new tab by adding ```target="_blank"``` to our HTML element, however, maybe we want to open a link in the current browser tab?
 
 To do this, we need access the [tabs Chrome extension API](https://developer.chrome.com/docs/extensions/reference/api/tabs).
 
@@ -266,11 +266,49 @@ and our HTML element:
 
 Now, we are able to differentiate our links depending on behavior needed.
 
+## Putting it all together
 
-## Let's put some things together
+1. Modify the permissions to your manifest.json file.
 
-Let's create a button on our popup page that alters the appearance of the current tab.
+```json
+"permissions": [
+    "tabs",
+    "activeTab",
+    "scripting"
+  ],
+```
+2. Add a button element to your popup.html file, and give it an id
 
+```html
+<button id="invert">Invert</button>
+```
+
+3. Add the following code to your popup.js
+
+```js
+// add functionality to invert button
+// add functionality to invert button
+document.getElementById('invert').addEventListener('click', () => {
+    // query active tabs
+    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+        // execute script to invert colors
+        chrome.scripting.executeScript({
+            // target the active tab
+            target: { tabId: tabs[0].id },
+            function: () => {
+                let filterValue = document.documentElement.style.filter;
+                if (filterValue.includes('invert')) {
+                    document.documentElement.style.filter = 'none';
+                } else {
+                    document.documentElement.style.filter = 'invert(100%)';
+                }
+            }
+        });
+    });
+});
+```
+
+Now, we can press a button on our popup and have it modify the current tab appearance.
 
 ## Explore the great beyond!
 
