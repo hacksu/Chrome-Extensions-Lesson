@@ -19,7 +19,7 @@ In this lesson, you will get an introduction to creating a Chrome extension. Ext
 
 At this point, we have a functional extension. The manifest.json file is the heart of your Chrome extension, essentially a config file. Web browsers are a constantly evolving software, and behaviors that used to behave a certain way will eventually become deprecated. Manifest version 2 is scheduled to be deprecated in June of 2024. 
 
-You may have heard about the anti-adblock changes coming to Chrome later this year (2024). As of now, Adblockers currently run on manifest version 2, and currently rely on large sets of rules (upwards of 300k) which determine whether content on a page is an ad. You can view some example rule lists [here.](https://easylist.to/) The forced upgrade to ```"manifest_version": 3``` significantly limits the number of rules that an extension can run (up to 30k), which greatly limits the effectiveness of adblockers.
+###### You may have heard about the anti-adblock changes coming to Chrome later this year (2024). As of now, Adblockers currently run on manifest version 2, and currently rely on large sets of rules (upwards of 300k) which determine whether content on a page is an ad. You can view some example rule lists [here.](https://easylist.to/) The forced upgrade to ```"manifest_version": 3``` significantly limits the number of rules that an extension can run (up to 30k), which greatly limits the effectiveness of adblockers.
 
 For our purposes, Manifest version 3 signifies that our web extension is up to date with the latest features and web standards, but this is not necessary to develop an extension locally.
 
@@ -72,7 +72,7 @@ Let's create a script that runs on a webpage. We will first need to make some mo
 "content_scripts" allows your extension to inject scripts into existing web pages. You specify what script file you will use within "js", and all pages that this script should modify within "matches."
 With these key-value pairs, we are telling Chrome that we want to run all JavaScript files in the list within the key "js", on all websites listed within the "matches" key.
 
-##### Note: Despite these keys having one value each, these square brackets are __NOT__ optional. JSON syntax does not support type coersion between one-element lists and strings.
+###### Note: Despite these keys having one value each, these square brackets are __NOT__ optional. JSON syntax does not support type coersion between one-element lists and strings.
 
 Now, it is time to create our script.
 
@@ -90,6 +90,8 @@ Our extension is ready for testing.
 
 [<img src="functionality0.png" width="500"/>](functionality0.png)
 
+We will need to hit the refresh button each time that we make a change to our extension. I'd recommend keeping this extensions page open in one of your tabs.
+
 For now, we've only configured our extension to run on https://www.example.com. In the future, if you wish to run a script on all websites, you can replace the URL with the token ```"<all urls>"```
 
 5. Visit https://www.example.com, you will be greeted by an alert.
@@ -99,26 +101,23 @@ For now, we've only configured our extension to run on https://www.example.com. 
 In addition to dialogues, we can also inject HTML elements into the page, or alter the appearance of existing content. Append the following to the JavaScript file:
 
 ```js
-// hide h1 element
-const hideMe = document.getElementsByTagName("h1");
+// hide p element
+const hideMe = document.getElementsByTagName("p");
 for (const e of hideMe) {
     e.style.display = 'none';
 }
 ```
-Saving our changes, the "Example Domain" header element is no longer visible. 
+Saving our changes, the p elements in our document is no longer visible. 
 
 Let's try something more fun. [CSS has a couple of built-in filters](https://developer.mozilla.org/en-US/docs/Web/CSS/filter), which we can choose to apply to the entirety of the loaded webpage.
 
 ```js
-// apply a random blur effect and color filter every second
-setInterval(function () {
-    var hueRotateDegrees = Math.floor(Math.random() * 361);
-    var blurStrength = Math.floor(Math.random() * 10);
-    document.documentElement.style.filter = `hue-rotate(${hueRotateDegrees}deg) blur(${blurStrength}px)`;
-}, 1000);
+// invert the page colors
+document.documentElement.style.filter = 'invert(100%)';
 ```
 
-After saving our extension, the appearance of the page changes dramatically, with a random hue and blur effect applied each second. 
+After saving our extension, the entire page inverts colors once the page loads.
+
 Let's inject an image into the page.
 
 6. Add the following to manifest.json, and be sure to replace ```[image-path-here]``` with whatever path your image uses.
@@ -286,7 +285,6 @@ Now, we are able to differentiate our links depending on behavior needed.
 3. Add the following code to your popup.js
 
 ```js
-// add functionality to invert button
 // add functionality to invert button
 document.getElementById('invert').addEventListener('click', () => {
     // query active tabs
