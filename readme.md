@@ -107,7 +107,7 @@ for (const e of hideMe) {
     e.style.display = 'none';
 }
 ```
-Saving our changes, the p elements in our document is no longer visible. 
+Saving our changes, the p elements in our document are no longer visible. 
 
 Let's try something more fun. [CSS has a couple of built-in filters](https://developer.mozilla.org/en-US/docs/Web/CSS/filter), which we can choose to apply to the entirety of the loaded webpage.
 
@@ -228,7 +228,7 @@ This allows us to use methods such as ```chrome.tabs.create()```, which requires
 <a href="popup2.html">Go to a new page</a>
 <a href="https://hacksu.com/cute_puppy.jpg">Feel better!</a>
 
-<script src=popup.js></script>
+<script src="popup.js"></script>
 ```
 
 6. Within popup.js, add the following code:
