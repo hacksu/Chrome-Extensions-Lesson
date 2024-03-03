@@ -37,12 +37,12 @@ You can specify multiple icon sizes if you wish (128, 48, 32, 16).
 4. Save the manifest.json file.
 5. Paste ```chrome://extensions``` in your address bar and enter. This is the main page we will be visiting to manage our extensions. 
 
-[<img src="setup1.png" width="500"/>](setup1.png)
+[<img src="readme_files/setup1.png" width="500"/>](setup1.png)
 
 6. Enable the "Developer mode" toggle on the top right. If this is not enabled, you cannot load custom extensions.
 7. Click the now visibile "Load unpacked" button on the top left. In the file explorer, locate the folder that you created in step 1.
 
-[<img src="setup2.png" width="500"/>](setup2.png)
+[<img src="readme_files/setup2.png" width="500"/>](setup2.png)
 
 We have now enabled our extension. Currently, this extension is doing nothing. But we'll add some functionality soon. 
 
@@ -88,7 +88,7 @@ Our extension is ready for testing.
 
 4. Navigate to the [extensions page](chrome://extensions) and refresh the extension (Bottom right of the extension, next to the toggle).
 
-[<img src="functionality0.png" width="500"/>](functionality0.png)
+[<img src="readme_files/functionality0.png" width="500"/>](functionality0.png)
 
 We will need to hit the refresh button each time that we make a change to our extension. I'd recommend keeping this extensions page open in one of your tabs.
 
@@ -96,7 +96,7 @@ For now, we've only configured our extension to run on https://www.example.com. 
 
 5. Visit https://www.example.com, you will be greeted by an alert.
 
-[<img src="functionality1.png" width="500"/>](functionality1.png)
+[<img src="readme_files/functionality1.png" width="500"/>](functionality1.png)
 
 In addition to dialogues, we can also inject HTML elements into the page, or alter the appearance of existing content. Append the following to the JavaScript file:
 
@@ -155,7 +155,7 @@ document.body.appendChild(img);
 
 Save and reload the extension. 
 
-[<img src="functionality2.png" width="500"/>](functionality2.png)
+[<img src="readme_files/functionality2.png" width="500"/>](functionality2.png)
 
 
 ### Creating a popup
@@ -182,7 +182,7 @@ Now, we need to create the popup page.
 Make sure all of your files are saved. 
 When reloading our extension and clicking on the icon (you may need to find your extension by clicking the "puzzle piece" icon and pinning it to your toolbar) we should see the following:
 
-[<img src="popup1.png" width="500"/>](popup1.png)
+[<img src="readme_files/popup1.png" width="500"/>](popup1.png)
 
 Let's add a second page to navigate to within our popup.
 
